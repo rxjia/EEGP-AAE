@@ -4,7 +4,7 @@
 import struct
 import itertools
 import numpy as np
-import scipy.misc
+import imageio
 import png
 import ruamel.yaml as yaml
 # import yaml
@@ -38,7 +38,7 @@ def load_cam_params(path):
     return cam
 
 def load_im(path):
-    im = scipy.misc.imread(path)
+    im = imageio.imread(path)
 
     # Using PyPNG
     # r = png.Reader(filename=path)
@@ -47,7 +47,7 @@ def load_im(path):
     return im
 
 def save_im(path, im):
-    scipy.misc.imsave(path, im)
+    imageio.imsave(path, im)
 
     # Using PyPNG (for RGB)
     # w_rgb = png.Writer(im.shape[1], im.shape[0], greyscale=False, bitdepth=8)
@@ -61,7 +61,8 @@ def load_depth(path):
     return im
 
 def load_depth2(path):
-    d = scipy.misc.imread(path)
+
+    d = imageio.imread(path)
     d = d.astype(np.float32)
     return d
 

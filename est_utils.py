@@ -93,10 +93,10 @@ def rotation_error_icp(depth_img, model_o3d, bbox_est,  R_est, t_est, K_test, wi
 
     real_depth_pts_o3d = o3d.geometry.PointCloud()
     real_depth_pts_o3d.points=o3d.utility.Vector3dVector(real_depth_pts)
-    real_depth_pts_o3d=o3d.geometry.voxel_down_sample(real_depth_pts_o3d,voxel_size=0.05)
+    real_depth_pts_o3d=o3d.geometry.PointCloud.voxel_down_sample(real_depth_pts_o3d,voxel_size=0.05)
 
-    o3d.geometry.estimate_normals(real_depth_pts_o3d,o3d.geometry.KDTreeSearchParamHybrid(radius=max_mean_dist/10.,max_nn=30))
-    o3d.geometry.orient_normals_towards_camera_location(real_depth_pts_o3d,np.array([0.,0.,0.]))
+    o3d.geometry.PointCloud.estimate_normals(real_depth_pts_o3d,o3d.geometry.KDTreeSearchParamHybrid(radius=max_mean_dist/10.,max_nn=30))
+    o3d.geometry.PointCloud.orient_normals_towards_camera_location(real_depth_pts_o3d,np.array([0.,0.,0.]))
 
 
     if verbose:
@@ -105,9 +105,9 @@ def rotation_error_icp(depth_img, model_o3d, bbox_est,  R_est, t_est, K_test, wi
         transformed_real_depth_pts_o3d.paint_uniform_color([0, 0.6, 0.9])
         o3d.visualization.draw_geometries([model_ori,transformed_real_depth_pts_o3d], width=480, height=480, left=300, top=300, window_name='Before-model coord')
 
-    reg = o3d.registration.registration_icp(source=real_depth_pts_o3d, target=model_ori, max_correspondence_distance= regist_error_threshold, init=ori_Rt_est_inv,
-                                            estimation_method=o3d.registration.TransformationEstimationPointToPlane(),
-                                            criteria=o3d.registration.ICPConvergenceCriteria(max_iteration=100,relative_fitness=1e-6,relative_rmse=1e-6))
+    reg = o3d.pipelines.registration.registration_icp(source=real_depth_pts_o3d, target=model_ori, max_correspondence_distance= regist_error_threshold, init=ori_Rt_est_inv,
+                                            estimation_method=o3d.pipelines.registration.TransformationEstimationPointToPlane(),
+                                            criteria=o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration=100,relative_fitness=1e-6,relative_rmse=1e-6))
 
     refine_Rt_est=np.linalg.inv(reg.transformation)
     refine_R_est = refine_Rt_est[:3,:3]
